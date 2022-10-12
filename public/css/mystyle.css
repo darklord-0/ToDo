@@ -1,0 +1,173 @@
+body
+{
+  padding: 0;
+  margin: 0;
+  background-color: #2565e3;
+}
+
+
+nav
+{
+    height: 80px;
+    /* background: #828588; */
+    background: #05245f;
+}   
+
+ul
+{
+    float: right;
+    margin: 0px;
+    margin-right: 25px;
+    
+}
+
+li
+{
+    display: inline-block;
+    line-height: 50px;
+    margin: 15px;
+}
+
+a
+{
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+
+#username
+{
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: 'Lucida Handwriting',' Courier New';
+  padding: 10px 30px;
+}
+
+
+#header
+{
+  background-color: #8baef7;
+width: 480px;
+padding: 10px 10px;
+
+margin: 40px auto;
+min-height: 5vh;
+border: 2px solid #06adf1;
+border-radius: 10px;
+box-shadow: 10px 10px 8px #b3cafb;
+font-size: 24px;
+}
+#section
+{
+  background-color: #8baef7;
+  position: relative;
+  width: 480px;
+  padding: 1px 10px;
+  margin: 40px auto;
+  /* display: table;
+  clear: both; */
+  height: fit-content;
+  min-height: 50vh;
+  /* height: auto; */
+  border: 2px solid #06adf1;
+  border-radius: 10px;
+  box-shadow: 10px 10px 8px #9dbcfd;
+}
+.sectionhead
+{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+#inputtodo
+{
+  width: 25rem;
+padding: 10px 10px;
+margin: 5px;
+font-size: 25px;
+/* border: none; */
+background: transparent;
+outline: none;
+}
+#addtodo
+{
+  height: 50px;
+width: 50px;
+border-radius: 50%;
+border-color: transparent;
+background-color: #14ff86;
+color: #fff;
+font-size: 30px;
+outline: none;
+margin: 5px;
+}
+
+div p 
+{
+  border-bottom: 1px solid black;
+  padding: 10px 20px;
+  font-size: 21px;
+  width: 20rem;
+}
+.checkbox
+{
+  width: 20px;
+  height: 18px;
+}
+.eachtodo
+{
+  cursor: pointer;
+}
+
+.todocheck{
+  text-decoration: line-through;
+  text-decoration-thickness: 0.1rem;
+}
+.item
+{
+  display: flex;
+align-items: center;
+}
+.delbtn, .renbtn
+{
+  height: 40px;
+width: 40px;
+border-radius: 50%;
+border-color: transparent;
+background-color: #ff1414;
+color: #fff;
+font-size: 18px;
+outline: none;
+margin: 5px;
+}
+
+#inputtodo:focus {
+  outline: none;
+  box-shadow: inset 0 -3px 0 0 #048643;
+}
+
+::placeholder {
+  color: grey;
+  opacity: 0.9;
+}
+
+.renbtn
+{
+background-color: #14a1ff;
+
+}
+.warning{
+  border-bottom:2px solid red;
+}
+footer
+{
+  text-align:center;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px 0px;
+  color: white;
+}

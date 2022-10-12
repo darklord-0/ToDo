@@ -1,0 +1,9 @@
+
+.gradient-custom {
+
+    background: #6a11cb;
+    background-color: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+    }
+    /* input{
+      border-bottom: 1px solid white;
+    } */
