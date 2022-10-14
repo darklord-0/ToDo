@@ -11,7 +11,8 @@
     "license": "ISC",
     "dependencies": {
       "express": "*",
-      "express-session": "*"
+      "express-session": "*",
+      "ejs":"*"
     }
   }
   

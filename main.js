@@ -17,6 +17,8 @@ app.use(session({
   cookie: { secure: false }	
 }))
 
+app.set("view engine","ejs");
+app.set("views","views")
 
 app.listen(3000,function(req,res)
 {
@@ -46,6 +48,7 @@ app.route("/signin")
 .post(function(req,res)
 {
 	console.log("post signin")
+
 	getUser( function(users)
 	{
 		const user = users.filter(function(user)
@@ -59,8 +62,8 @@ app.route("/signin")
 
 		if(user.length === 1)
 		{
-			req.session.user = user[0].username;
-
+			req.session.username = user[0].username;
+	
 			req.session.isLoggedIn = true;	// creating a flag
 			// res.end("login success");
 			res.redirect("/");
@@ -96,11 +99,22 @@ app.route("/signup")
 
 })
 
+
+
+app.get("/logout",function(req,res)
+{
+	req.session.destroy();
+	res.redirect("/");
+})
+
+
 function GetUser(req,res)
 {
 
 	if(req.session.isLoggedIn)
-		res.json(req.session.user);
+	{
+		res.json(req.session.username);
+	}
 	else
 		res.end("login first");
 }
@@ -111,7 +125,18 @@ function Home(req,res)
 	
 	if(req.session.isLoggedIn)
 	{
-		res.sendFile(__dirname + "/public/html/home.html");
+		getTodos(function(err,todos)
+		{
+
+			const userTodos = todos.filter(function(todo)
+			{
+				return todo.createdBy === req.session.username;
+			})
+			
+			res.render("home" ,{ data : userTodos , username : req.session.username });
+		// res.sendFile(__dirname + "/public/html/home.html");
+
+		})
 	}
 	else
 	{
@@ -121,13 +146,18 @@ function Home(req,res)
 
 function PostTodo(req,res)
 {
-	saveTodo(req.body , function(err)
+	const todo = {
+		task : req.body.task,
+		createdBy : req.session.username
+	}
+
+	saveTodo( todo , function(err)
 	{
 		if(err)
 		{
 			console.log(err)
 		}
-		res.end();
+		res.redirect("/");
 	});
 
 }
@@ -256,7 +286,6 @@ function saveTodo(todo, callback)
 		// console.log('2', Array.isArray(todos));
 
 		todos.push(todo);
-	
 		fs.writeFile("./todo.txt",JSON.stringify(todos),function(err)
 		{
 
@@ -295,9 +324,14 @@ function saveUser(user, callback)
 	{
 		users.push(user);
 
-		fs.writeFile("./users.txt", JSON.stringify(users) , function(err,data)
+		fs.writeFile("./users.txt", JSON.stringify(users) , function(err)
 		{
-			callback();
+			if(err)
+			{
+				callback(err);
+				return;
+			}
+			callback(null);
 		})
 	}
 
@@ -309,10 +343,11 @@ function getUser(callback)
 {
 	fs.readFile("./users.txt","utf-8",function(err,data)
 	{
-		// if(err)
-		// {
-		// 	callback()
-		// }
+		if(err)
+		{
+			callback()
+		}
+		console.log('users',JSON.parse(data))
 		callback(JSON.parse(data))
 	})
 }

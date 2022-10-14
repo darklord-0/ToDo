@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/mystyle.css">
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+      <span id="headusername" > HI  <%= username %></span>
+        <li>
+          <a href="/logout">LOGOUT</a>
+        </li>
+      </ul>
+    </nav>
+
+    <header id="header">TODO List</header>
+
+    <div id="section">
+      <div class="sectionhead">
+
+        <form action="/todo" method="POST">
+          <input placeholder="enter task" id="inputtodo" name="task" />
+          <input type="submit" id="addtodo" value="+" />
+        </form>
+
+      </div>
+      
+      <div id="parent">
+      
+        <% data.forEach(function(todo){ %>
+          <p> <%= todo.task %> </p>
+
+          <form method="delete" action="/todo">
+            <input name = "id" value="<%= todo.task %>" style="display:none" />
+            <input type = "submit" value="X" />
+          </form>
+
+        <% }) %>
+      
+      </div>
+
+    </div>
+
+    <!-- <footer>
+      <p>MADE BY HARSHIT &#169; 2022</p>
+    </footer> -->
+
+
+  
+  </body>
+</html>
