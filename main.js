@@ -2,13 +2,18 @@ const express = require("express");
 const fs = require("fs");
 const session = require('express-session')
 
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads' })
+
 const app = express();
 
 
 
 app.use( express.static("public") );
+app.use( express.static("uploads") );
 app.use( express.json() );
 app.use( express.urlencoded({extended : true}) )
+
 
 app.use(session({
   secret: 'keyboard cat',
@@ -28,8 +33,14 @@ app.listen(3000,function(req,res)
 
 app.get("/", Home);
 
-app.route("/todo").get(GetTodo).post(PostTodo);
+app.route("/todo").get(GetTodo).post(upload.single('todopic') , PostTodo);
 app.route("/todo/:val").delete(DeleteTodo).put(EditToDo);
+
+//this or use MW static uploads
+// app.get("/uploads/:id",function(req , res)
+// {
+// 	res.sendFile(__dirname + "/uploads/" + req.params.id)
+// })
 
 app.get("/user",GetUser);
 
@@ -38,7 +49,7 @@ app.route("/signin")
 {
 	if(!req.session.isLoggedIn)
 	{
-		res.sendFile(__dirname + "/public/html/signin.html");
+		res.render("signin", { error : "" });
 	}
 	else
 	{
@@ -59,18 +70,18 @@ app.route("/signin")
 					 return true;
 				 }
 		})
-
+		// console.log("1",user[0])
 		if(user.length === 1)
 		{
 			req.session.username = user[0].username;
-	
+			// req.session.todopic = user[0].todopic;
 			req.session.isLoggedIn = true;	// creating a flag
 			// res.end("login success");
 			res.redirect("/");
 		}
 		else
 		{
-			res.end("login failed");
+			res.render("signin" , { error : "user not found, login failed" });
 		}
 	})
 })
@@ -132,8 +143,10 @@ function Home(req,res)
 			{
 				return todo.createdBy === req.session.username;
 			})
+
+			// console.log("2" ,req.session.todopic );
 			
-			res.render("home" ,{ data : userTodos , username : req.session.username });
+			res.render("home" ,{ data : userTodos , username : req.session.username , todopic : req.session.todopic });
 		// res.sendFile(__dirname + "/public/html/home.html");
 
 		})
@@ -146,9 +159,15 @@ function Home(req,res)
 
 function PostTodo(req,res)
 {
+	console.log(req.file)
+
+	req.session.todopic = req.file.filename;
+
+
 	const todo = {
 		task : req.body.task,
-		createdBy : req.session.username
+		createdBy : req.session.username,
+		todopic : req.file.filename
 	}
 
 	saveTodo( todo , function(err)

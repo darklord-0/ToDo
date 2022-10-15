@@ -12,7 +12,8 @@
     "dependencies": {
       "express": "*",
       "express-session": "*",
-      "ejs":"*"
+      "ejs":"*",
+      "multer":"*"
     }
   }
   
