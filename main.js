@@ -5,6 +5,12 @@ const session = require('express-session')
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads' })
 
+const startDb = require('./database/init');
+const userModel = require('./database/models/user')
+const todoModel = require('./database/models/todo')
+
+startDb();
+
 const app = express();
 
 
@@ -60,17 +66,10 @@ app.route("/signin")
 {
 	console.log("post signin")
 
-	getUser( function(users)
+	getUser( req.body.username , req.body.password , function(err , user)
 	{
-		const user = users.filter(function(user)
-		{
-			if(user.username === req.body.username && 
-				 user.password === req.body.password)
-				 {
-					 return true;
-				 }
-		})
-		// console.log("1",user[0])
+
+		console.log("1",user)
 		if(user.length === 1)
 		{
 			req.session.username = user[0].username;
@@ -98,7 +97,7 @@ app.route("/signup")
 	{
 		if(err)
 		{
-			res.end(err);
+			res.render("signup" , {error : "cant save user, already exists"});
 		}
 		else
 		{
@@ -276,47 +275,32 @@ function deleteandwrite(data)
 
 function getTodos(callback)
 {
-	fs.readFile("./todo.txt","utf-8",function(err,data)
-	{	
 
-	// console.log('1',data)
-	// console.log('1',typeof data)
-	// console.log('1',typeof (JSON.parse(data)))
-	
-		if(err)
-		{
-			callback(err,null);
-			return;
-		}
-		else
-		{
-			callback(null,JSON.parse(data));
-		}
-	});
+	todoModel.find({})
+	.then(function(todos)
+	{
+		callback(null , todos)	
+	})
+	.catch(function(err)
+	{
+		callback("cant get todos")
+	})
+
 }
 
 
 function saveTodo(todo, callback)
 {
-	getTodos(function(err,todos)
+
+	todoModel.create(todo)
+	.then(function()
 	{
-
-		// console.log('2',todos)
-		// console.log('2', Array.isArray(todos));
-
-		todos.push(todo);
-		fs.writeFile("./todo.txt",JSON.stringify(todos),function(err)
-		{
-
-			if(err)
-			{
-				callback(err);
-				return;
-			}
-			callback(null)
-		});
-
-	});
+		callback(null)	
+	})
+	.catch(function()
+	{
+		callback("cant save todo")
+	})
 
 }
 
@@ -324,49 +308,32 @@ function saveTodo(todo, callback)
 
 function saveUser(user, callback)
 {
-	let userExists = false;
-	getUser(function(users)
+	
+	console.log('saveuser', user)
+
+	userModel.create(user)
+	.then(function()
 	{
-		users.forEach(function(ele)
-		{
-			if(ele.username === user.username)
-			{
-				console.log("user exist same username")
-				userExists = true;
-				callback("same user");
-				
-			}
-
-		})
-
-	if(!userExists)
+		callback(null)	
+	})
+	.catch(function(err)
 	{
-		users.push(user);
-
-		fs.writeFile("./users.txt", JSON.stringify(users) , function(err)
-		{
-			if(err)
-			{
-				callback(err);
-				return;
-			}
-			callback(null);
-		})
-	}
-
+		callback(err)
 	})
 }
 
 
-function getUser(callback)
+function getUser(username , password , callback)
 {
-	fs.readFile("./users.txt","utf-8",function(err,data)
+
+	userModel.find({username:username , password:password})
+	.then(function(data)
 	{
-		if(err)
-		{
-			callback()
-		}
-		console.log('users',JSON.parse(data))
-		callback(JSON.parse(data))
+		callback(null , data)	
 	})
+	.catch(function(err)
+	{
+		callback(err)
+	})
+
 }

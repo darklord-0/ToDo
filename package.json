@@ -13,7 +13,8 @@
       "express": "*",
       "express-session": "*",
       "ejs":"*",
-      "multer":"*"
+      "multer":"*",
+      "mongoose":"*"
     }
   }
   
